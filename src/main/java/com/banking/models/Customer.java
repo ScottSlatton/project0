@@ -12,7 +12,8 @@ public class Customer extends User {
     private String email;
     private int age;
     private String city;
-    private List<Account> accounts = new ArrayList<Account>();
+    private double balance;
+//    private List<Account> accounts = new ArrayList<Account>();
 
 
 
@@ -39,32 +40,41 @@ public class Customer extends User {
         this.city = city;
     }
 
-
     @Override
     public String toString() {
         return "Customer{" +
-                "firstName='" + firstName + '\'' +
+                "id='" + id + '\'' +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phone=" + phone +
                 ", email='" + email + '\'' +
                 ", age=" + age +
                 ", city='" + city + '\'' +
+                ", balance=" + balance +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }
 
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
     public String getId() {
         return id;
     }
-
-    public List<Account> getAccounts() {
-        return accounts;
-    }
-
-    public void setAccounts(List<Account> accounts) {
-        this.accounts = accounts;
-    }
+//
+//    public List<Account> getAccounts() {
+//        return accounts;
+//    }
+//
+//    public void setAccounts(List<Account> accounts) {
+//        this.accounts = accounts;
+//    }
 
 
     public String getFirstName() {
@@ -116,5 +126,23 @@ public class Customer extends User {
     }
 
     public void setId(String string) {
+    }
+
+    public void deposit(double amount){
+        this.balance += amount;
+    }
+    public void withdraw(double amount){
+        if (amount <= this.balance){
+            this.balance -= amount;
+        } else {
+            System.out.println("You don't have enough funds!");
+        }
+    }
+
+
+    public void transfer(Customer payee, double amount){
+        payee.deposit(amount);
+        this.withdraw(amount);
+        //Update both accounts in the db
     }
 }
