@@ -14,30 +14,31 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer createCustomer(Customer customer) throws BusinessException {
 
         try(Connection connection = OracleConnection.getConnection()){
-            String sql= "{call CREATECUSTOMER(?, ?, ?, ?, ?, ?, ?, ?)}";
+            String sql= "{call CREATECUSTOMER(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
             //fill in the ?'s
 
             CallableStatement callableStatement = connection.prepareCall(sql);
-            callableStatement.setString(1, customer.getUsername());
-            callableStatement.setString(2, customer.getPassword());
-            callableStatement.setString(3, customer.getFirstName());
-            callableStatement.setString(4, customer.getLastName());
-            callableStatement.setLong(5, customer.getPhone());
-            callableStatement.setString(6, customer.getEmail());
-            callableStatement.setInt(7, customer.getAge());
-            callableStatement.setString(8, customer.getCity());
+            callableStatement.setString(2, customer.getUsername());
+            callableStatement.setString(3, customer.getPassword());
+            callableStatement.setString(4, customer.getFirstName());
+            callableStatement.setString(5, customer.getLastName());
+            callableStatement.setLong(6, customer.getPhone());
+            callableStatement.setString(7, customer.getEmail());
+            callableStatement.setInt(8, customer.getAge());
+            callableStatement.setString(9, customer.getCity());
 
             //register id because it is an OUT param
 
-//            callableStatement.registerOutParameter(1, Types.NUMERIC);
+            callableStatement.registerOutParameter(1, Types.VARCHAR);
 
             callableStatement.execute();
+
             //callableStatement should have executed and now contains the ID param
 
-//            customer.setId(callableStatement.getInt(1));
+            customer.setId(callableStatement.getString(1));
 
-            System.out.println("Customer successfully made.");
+            System.out.println("Customer account successfully created.");
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new BusinessException("Internal error. Please don't panic.");

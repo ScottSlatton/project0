@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Customer extends User {
 
+    private String id;
     private String firstName;
     private String lastName;
     private long phone;
@@ -13,19 +14,23 @@ public class Customer extends User {
     private String city;
     private List<Account> accounts = new ArrayList<Account>();
 
-//    public void transfer(Account payer, Account payee){
+
+
+
+
+    //    public void transfer(Account payer, Account payee){
 //        payer.accounts[0].withdraw(100.00);
 //        payee.accounts[0].deposit(100.00);
 //        //Update balance for both accounts
 //    }
 
-
     public Customer() {
         super();
     }
 
-    public Customer(String username, String password, String firstName, String lastName, long phone, String email, int age, String city) {
+    public Customer(String username, String password, String id, String firstName, String lastName, long phone, String email, int age, String city) {
         super(username, password);
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
@@ -47,6 +52,18 @@ public class Customer extends User {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
     }
 
 
@@ -96,5 +113,8 @@ public class Customer extends User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public void setId(String string) {
     }
 }

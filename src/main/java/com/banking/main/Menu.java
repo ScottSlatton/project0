@@ -7,8 +7,11 @@ import com.banking.service.impl.CustomerServiceImpl;
 
 import java.text.ParseException;
 import java.util.Scanner;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 public class Menu {
+
 
     boolean quit = false;
 
@@ -94,19 +97,12 @@ public class Menu {
         System.out.println("Please enter the city in which you live");
         customer.setCity(kb.nextLine());
 
-        // Refer to employee to approve/reject
-        //TODO Validate inputs and Send customer object to PendingAccounts Table
-
-        System.out.println("Before: " + customer.toString());
+        //TODO Validate inputs
 
         Customer pendingCustomer = service.createCustomer(customer);
-
-        pendingCustomer.toString();
-
-        System.out.println("After: " + customer.toString());
-        System.out.println("Thank you for your application. See a Monet & Bagges employee for more information on the approval process.");
-
-
+        if(pendingCustomer.getId() != null){
+            System.out.println("Thank you for your application. See a Monet & Bagges employee for more information on the approval process.");
+        }
 
     }
 
