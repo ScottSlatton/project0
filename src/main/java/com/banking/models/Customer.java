@@ -29,6 +29,8 @@ public class Customer extends User {
         super();
     }
 
+    public Customer(String id, String username, double balance){};
+
     public Customer(String username, String password, String id, String firstName, String lastName, long phone, String email, int age, String city) {
         super(username, password);
         this.id = id;

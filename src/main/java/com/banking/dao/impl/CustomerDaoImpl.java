@@ -52,8 +52,28 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
-    public Customer getCustomerByLogin(String username, String password) {
-        return null;
+    public Customer getCustomerByLogin(Customer customer) throws BusinessException {
+
+        try (Connection connection = OracleConnection.getConnection()) {
+            String sql = "{SELECT * FROM customer WHERE username = 'Sslatton';}";
+            CallableStatement callableStatement = connection.prepareCall(sql);
+//            callableStatement.setString(1, customer.getUsername());
+//            callableStatement.setString(2, customer.getPassword());
+
+            ResultSet rs = callableStatement.executeQuery();
+            while (rs.next()) {
+                String id = rs.getString("ID");
+                double balance = rs.getDouble("BALANCE");
+                String username = rs.getString("USERNAME");
+
+                customer = new Customer(id, username, balance);
+            }
+
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new BusinessException("Internal error. Please don't panic.");
+        }
+        return customer;
     }
 
     @Override
@@ -74,5 +94,22 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public List<Customer> getAllCustomers() throws BusinessException {
         return null;
+    }
+
+    @Override
+    public Customer updateBalance(Customer customer) throws BusinessException {
+        try (Connection connection = OracleConnection.getConnection()) {
+            String sql = "{UPDATE CUSTOMER SET BALANCE = ? WHERE ID = ?}";
+            CallableStatement callableStatement = connection.prepareCall(sql);
+            callableStatement.setDouble(1, customer.getBalance());
+            callableStatement.setString(2, customer.getId());
+
+            callableStatement.execute();
+
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new BusinessException("Internal error. Please don't panic.");
+        }
+        return customer;
     }
 }

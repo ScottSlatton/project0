@@ -31,7 +31,7 @@ public class Menu {
         System.out.println("0) Log out");
     }
 
-    private static void displayCustomerLogin(){
+    private static void displayCustomerLogin() throws BusinessException {
         System.out.println("--------------");
         System.out.println("Customer Login");
         System.out.println("--------------\n");
@@ -45,6 +45,9 @@ public class Menu {
 
         customer.setPassword(kb.nextLine());
         // TODO query the database for the customer
+        CustomerService service = new CustomerServiceImpl();
+        service.customerLogin(customer);
+        System.out.println(customer.toString());
         // if successful take them to displayCustomerMenu
 
     }
@@ -222,8 +225,12 @@ public class Menu {
                 break;
             case 1:
                 // login customer login
-                displayCustomerLogin();
-                runCustomerMenu();
+                try {
+                    displayCustomerLogin();
+                    runCustomerMenu();
+                } catch (BusinessException e){
+                    System.out.println(e.getMessage());
+                }
                 break;
             case 2:
                 // employee login

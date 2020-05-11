@@ -28,7 +28,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer customerLogin(Customer customer) throws BusinessException {
-        return null;
+        try{
+            dao.getCustomerByLogin(customer);
+        } catch(BusinessException e) {
+            System.out.println(e.getMessage());
+        }
+        return customer;
     }
 
     public void validatesCustomer(Customer customer) throws BusinessException {
