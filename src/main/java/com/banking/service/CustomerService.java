@@ -10,10 +10,8 @@ public interface CustomerService {
     public Customer createCustomer(Customer customer) throws BusinessException;
     public Customer customerLogin(Customer customer) throws BusinessException;
     public Customer getCustomerById(String id) throws BusinessException;
-    public Customer updateCustomerPhone(String id, long newPhone) throws BusinessException;
+    public Customer getCustomerByUsername(String username) throws BusinessException;
+    public Customer updateCustomerPassword(String id, String password) throws BusinessException;
     public void deleteCustomer(String id) throws BusinessException;
-    public List<Customer> getCustomersByCity(String city) throws BusinessException;
-
-
 
 }

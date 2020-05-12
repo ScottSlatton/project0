@@ -28,7 +28,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer customerLogin(Customer customer) throws BusinessException {
+
+        // this is a basic Get customer from Database
         try{
+            validatesCustomer(customer);
             dao.getCustomerByLogin(customer);
         } catch(BusinessException e) {
             System.out.println(e.getMessage());
@@ -39,54 +42,57 @@ public class CustomerServiceImpl implements CustomerService {
     public void validatesCustomer(Customer customer) throws BusinessException {
         if(customer == null){
             throw new BusinessException("Customer Object was not found.");
-        } else if (!isValidPhone(customer.getPhone())){
-            throw new BusinessException("Customer phone number is invalid.");
-        } else if (!isValidCity(customer.getCity())) {
-            throw new BusinessException("Customer city is invalid.");
-        } else if (!isValidName(customer.getFirstName())) {
-            throw new BusinessException("Customer name is invalid.");
-        } else if (!isValidName(customer.getLastName())) {
-            throw new BusinessException("Customer Last Name is invalid.");
-        } else if (!isValidEmail(customer.getEmail())) {
-            throw new BusinessException("Customer Email is invalid.");
+        } else if (!isValidUsername(customer.getUsername())){
+            throw new BusinessException("Username is invalid.");
+        } else if (!isValidPassword(customer.getPassword())) {
+            throw new BusinessException("Password is invalid. Password must be between 4 - 20 characters, can contain numbers.");
         }
     }
 
-    private boolean isValidPhone(long phone){
+
+    private boolean isValidUsername(String username){
         boolean b = false;
-        if ((phone + "").matches("[0-9]{10}")){
-            b = true;
-        }
-        return b;
-    }
-    private boolean isValidName(String name){
-        boolean b = false;
-        if (name.matches("[a-zA-Z]{2,10}")){
+        if (username.matches("[a-zA-Z]{2,10}")){
             b = true;
         }
         return b;
     }
     private boolean isValidId(String id){
         boolean b = false;
-        if (id.matches("MB[A-Z]{2}[0-9]{12}")){
+        if (id.matches("MBU[A-Z]{3}[0-9]{4}")){
             b = true;
         }
         return b;
     }
-    private boolean isValidCity(String city){
+
+    private boolean isValidPassword(String password){
         boolean b = false;
-        if (city.matches("[a-zA-Z]{2,11}")){
+        if (password.matches("[a-zA-Z0-9]{4,20}")){
             b = true;
         }
         return b;
     }
-    private boolean isValidEmail(String email){
-        boolean b = false;
-        if (email.matches("^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$")){
-            b = true;
-        }
-        return b;
-    }
+//    private boolean isValidPhone(long phone){
+//        boolean b = false;
+//        if ((phone + "").matches("[0-9]{10}")){
+//            b = true;
+//        }
+//        return b;
+//    }
+//    private boolean isValidCity(String city){
+//        boolean b = false;
+//        if (city.matches("[a-zA-Z]{2,11}")){
+//            b = true;
+//        }
+//        return b;
+//    }
+//    private boolean isValidEmail(String email){
+//        boolean b = false;
+//        if (email.matches("^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$")){
+//            b = true;
+//        }
+//        return b;
+//    }
 
 
 
@@ -96,7 +102,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer updateCustomerPhone(String id, long newPhone) throws BusinessException {
+    public Customer getCustomerByUsername(String username) throws BusinessException {
+        return null;
+    }
+
+
+    @Override
+    public Customer updateCustomerPassword(String id, String Password) throws BusinessException {
         return null;
     }
 
@@ -105,8 +117,4 @@ public class CustomerServiceImpl implements CustomerService {
 
     }
 
-    @Override
-    public List<Customer> getCustomersByCity(String city) throws BusinessException {
-        return null;
-    }
 }

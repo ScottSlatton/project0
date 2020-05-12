@@ -82,24 +82,6 @@ public class Menu {
         System.out.println("Please enter your desired password");
         customer.setPassword(kb.nextLine());
 
-        System.out.println("Please enter your First Name");
-        customer.setFirstName(kb.nextLine());
-
-        System.out.println("Please enter your Last Name");
-        customer.setLastName(kb.nextLine());
-
-        System.out.println("Please enter your Phone Number");
-        customer.setPhone(Long.parseLong(kb.nextLine()));
-
-        System.out.println("Please enter your age");
-        customer.setAge(Integer.parseInt(kb.nextLine()));
-
-        System.out.println("Please enter your email");
-        customer.setEmail(kb.nextLine());
-
-        System.out.println("Please enter the city in which you live");
-        customer.setCity(kb.nextLine());
-
         //TODO Validate inputs
 
         Customer pendingCustomer = service.createCustomer(customer);
