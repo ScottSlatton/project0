@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface CustomerService {
 
-    public Customer createCustomer(Customer customer) throws BusinessException;
-    public Customer customerLogin(Customer customer) throws BusinessException;
-    public Customer getCustomerById(String id) throws BusinessException;
-    public Customer getCustomerByUsername(String username) throws BusinessException;
-    public Customer updateCustomerPassword(String id, String password) throws BusinessException;
-    public void deleteCustomer(String id) throws BusinessException;
+    Customer createCustomer(Customer customer) throws BusinessException;
+    Customer customerLogin(Customer customer) throws BusinessException;
+    Customer getCustomerById(String id) throws BusinessException;
+    Customer getCustomerByUsername(String username) throws BusinessException;
+    Customer updateCustomerPassword(String id, String password) throws BusinessException;
+    void deleteCustomer(String id) throws BusinessException;
 
 }

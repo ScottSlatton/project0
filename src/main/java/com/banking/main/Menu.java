@@ -3,12 +3,16 @@ package com.banking.main;
 import com.banking.exception.BusinessException;
 import com.banking.models.Account;
 import com.banking.models.Customer;
+import com.banking.models.Employee;
 import com.banking.service.CustomerService;
+import com.banking.service.EmployeeService;
 import com.banking.service.impl.CustomerServiceImpl;
 
 import java.text.ParseException;
 import java.util.List;
 import java.util.Scanner;
+
+import com.banking.service.impl.EmployeeServiceImpl;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -32,6 +36,28 @@ public class Menu {
         System.out.println("4) Transfer funds to another Account");
         System.out.println("5) Transfer funds to another M & B Customer");
         System.out.println("0) Log out");
+    }
+
+    private static void displayEmployeeLogin() throws BusinessException {
+        System.out.println("--------------");
+        System.out.println("Employee Login");
+        System.out.println("--------------\n");
+        System.out.println("Please enter your username");
+        Scanner kb = new Scanner(System.in);
+        Employee employee = new Employee();
+
+        employee.setUsername(kb.nextLine());
+
+        System.out.println("Please enter your password");
+
+        employee.setPassword(kb.nextLine());
+        EmployeeService service = new EmployeeServiceImpl();
+        employee = service.employeeLogin(employee);
+
+        // if successful take them to displayCustomerMenu
+        if(employee.getId() == null){
+            throw new BusinessException("Log in credentials incorrect.");
+        }
     }
 
     private static void displayCustomerLogin() throws BusinessException {
@@ -121,14 +147,12 @@ public class Menu {
         System.out.println("0) To exit");
     }
 
-
     private static void displayLogout(){
         System.out.println("Would you like to log out?");
         System.out.println("1) Yes");
         System.out.println("2) No");
 
     }
-
     private static void displayHomeMenu(){
         displayGreeting();
         displayLoginMain();
@@ -148,7 +172,6 @@ public class Menu {
         }
         return choice;
     }
-
     public void runCustomerMenu(){
         while(!quit){
             displayCustomerMenu();
@@ -156,13 +179,48 @@ public class Menu {
             handleCustomerMenu(choice);
         }
     }
-
-    public void logoutMenu(){
-        displayLogout();
-        int choice = getInput(2);
-        handleLogout(choice);
+    public void runEmployeeMenu(){
+        while(!quit){
+            displayEmployeeMenu();
+            int choice = getInput(4);
+            handleEmployeeMenu(choice);
+        }
+    }
+    public void runHomeMenu(){
+        while(!quit){
+            displayHomeMenu();
+            int choice = getInput(4);
+            handleHomeMenu(choice);
+        }
     }
 
+    public void handleEmployeeMenu(int choice){
+        //Logic for the Employee Sub-menu options
+
+        switch(choice){
+            case 0:
+                //exit options
+                logoutMenu();
+                break;
+            case 1:
+                //Check customer account by username
+
+                break;
+            case 2:
+                //View all transactions
+
+                break;
+            case 3:
+                //Withdraw
+
+                break;
+            default:
+                System.out.println("Invalid selection, please try again.");
+                break;
+        }
+
+
+    }
     private void handleCustomerMenu(int choice){
 
         //Logic for the Customer Sub-menu options
@@ -189,18 +247,6 @@ public class Menu {
                 break;
         }
     }
-
-
-
-    public void runHomeMenu(){
-        while(!quit){
-            displayHomeMenu();
-            int choice = getInput(4);
-            handleHomeMenu(choice);
-        }
-    }
-
-
     private void handleHomeMenu(int choice){
 
         //Logic for the main menu options
@@ -221,6 +267,13 @@ public class Menu {
                 break;
             case 2:
                 // employee login
+                try {
+                    displayEmployeeLogin();
+                    System.out.println("still inside case try block 289");
+                    runEmployeeMenu();
+                } catch (BusinessException e){
+                    System.out.println(e.getMessage());
+                }
                 break;
             case 3:
                 // new customer sign up
@@ -235,7 +288,6 @@ public class Menu {
                 break;
         }
     }
-
     private void handleLogout(int choice) {
         switch(choice){
             case 1:
@@ -250,4 +302,15 @@ public class Menu {
         }
 
     }
+
+    public void logoutMenu(){
+        displayLogout();
+        int choice = getInput(2);
+        handleLogout(choice);
+    }
+
+
+
+
+
 }
