@@ -5,25 +5,17 @@ import java.util.List;
 
 public class Customer extends User {
 
-    private String id;
-
+    public String id;
     private List<Account> accounts = new ArrayList<>();
 
-
-
-
-
-    //    public void transfer(Account payer, Account payee){
-//        payer.accounts[0].withdraw(100.00);
-//        payee.accounts[0].deposit(100.00);
-//        //Update balance for both accounts
-//    }
 
     public Customer() {
         super();
     }
 
-    public Customer(String id, String username, double balance){
+    public Customer(String id, String username){
+        super(username);
+        this.id = id;
     };
 
     public Customer(String id, String username, String password) {
@@ -46,6 +38,11 @@ public class Customer extends User {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
     public List<Account> getAccounts() {
         return accounts;
     }
@@ -53,11 +50,5 @@ public class Customer extends User {
     public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
     }
-
-
-
-    public void setId(String string) {
-    }
-
 
 }

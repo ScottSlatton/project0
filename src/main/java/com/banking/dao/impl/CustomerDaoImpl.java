@@ -14,19 +14,13 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer createCustomer(Customer customer) throws BusinessException {
 
         try(Connection connection = OracleConnection.getConnection()){
-            String sql= "{call CREATECUSTOMER(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+            String sql= "{call CREATECUSTOMER(?, ?, ?)}";
 
             //fill in the ?'s
 
             CallableStatement callableStatement = connection.prepareCall(sql);
             callableStatement.setString(2, customer.getUsername());
             callableStatement.setString(3, customer.getPassword());
-            callableStatement.setString(4, customer.getFirstName());
-            callableStatement.setString(5, customer.getLastName());
-            callableStatement.setLong(6, customer.getPhone());
-            callableStatement.setString(7, customer.getEmail());
-            callableStatement.setInt(8, customer.getAge());
-            callableStatement.setString(9, customer.getCity());
 
             //register id because it is an OUT param
 
@@ -54,26 +48,29 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public Customer getCustomerByLogin(Customer customer) throws BusinessException {
 
-        try (Connection connection = OracleConnection.getConnection()) {
-            String sql = "{SELECT * FROM customer WHERE username = 'Sslatton';}";
-            CallableStatement callableStatement = connection.prepareCall(sql);
-//            callableStatement.setString(1, customer.getUsername());
-//            callableStatement.setString(2, customer.getPassword());
+        Customer c=null;
+        try(Connection connection=OracleConnection.getConnection()){
+            String sql="Select id, username from customer where username = ? AND password = ?";
+            PreparedStatement ps=connection.prepareStatement(sql);
+            ps.setString(1, customer.getUsername());
+            ps.setString(2, customer.getPassword());
 
-            ResultSet rs = callableStatement.executeQuery();
-            while (rs.next()) {
-                String id = rs.getString("ID");
-                double balance = rs.getDouble("BALANCE");
-                String username = rs.getString("USERNAME");
+            ResultSet resultSet=ps.executeQuery();
 
-                customer = new Customer(id, username, balance);
+            if(resultSet.next()) {
+                c = new Customer();
+
+                c.setId(resultSet.getString("id"));
+                c.setUsername(resultSet.getString("username"));
+//                t.setAccounts(resultSet.get("accountid"));
+                System.out.println("You have been logged in. \nWelcome " + c.getUsername());
+                return c;
+            }else {
+                throw new BusinessException("Username "+ customer.getUsername() +" does not exist");
             }
-
-
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new BusinessException("Internal error. Please don't panic.");
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new BusinessException("Internal Error, please don't panic.");
         }
-        return customer;
     }
 
     @Override
@@ -98,18 +95,23 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public Customer updateBalance(Customer customer) throws BusinessException {
-        try (Connection connection = OracleConnection.getConnection()) {
-            String sql = "{UPDATE CUSTOMER SET BALANCE = ? WHERE ID = ?}";
-            CallableStatement callableStatement = connection.prepareCall(sql);
-            callableStatement.setDouble(1, customer.getBalance());
-            callableStatement.setString(2, customer.getId());
-
-            callableStatement.execute();
-
-
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new BusinessException("Internal error. Please don't panic.");
-        }
-        return customer;
+        return null;
     }
+
+//    @Override
+//    public Customer updateBalance(Customer customer) throws BusinessException {
+//        try (Connection connection = OracleConnection.getConnection()) {
+//            String sql = "{UPDATE CUSTOMER SET BALANCE = ? WHERE ID = ?}";
+//            CallableStatement callableStatement = connection.prepareCall(sql);
+//            callableStatement.setDouble(1, customer.getBalance());
+//            callableStatement.setString(2, customer.getId());
+//
+//            callableStatement.execute();
+//
+//
+//        } catch (SQLException | ClassNotFoundException e) {
+//            throw new BusinessException("Internal error. Please don't panic.");
+//        }
+//        return customer;
+//    }
 }

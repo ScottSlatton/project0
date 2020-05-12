@@ -32,7 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
         // this is a basic Get customer from Database
         try{
             validatesCustomer(customer);
-            dao.getCustomerByLogin(customer);
+            customer = dao.getCustomerByLogin(customer);
         } catch(BusinessException e) {
             System.out.println(e.getMessage());
         }

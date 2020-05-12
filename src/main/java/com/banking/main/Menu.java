@@ -1,11 +1,13 @@
 package com.banking.main;
 
 import com.banking.exception.BusinessException;
+import com.banking.models.Account;
 import com.banking.models.Customer;
 import com.banking.service.CustomerService;
 import com.banking.service.impl.CustomerServiceImpl;
 
 import java.text.ParseException;
+import java.util.List;
 import java.util.Scanner;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -15,8 +17,9 @@ public class Menu {
 
     boolean quit = false;
 
-    private static void displayBalance(){
-        System.out.println("Your balance is currently: $");
+    private static void displayBalance(Customer customer){
+        List<Account> accountList = customer.getAccounts();
+        System.out.println("Your balance is currently: $" + accountList.get(0).getBalance());
     }
 
     private static void displayCustomerMenu(){
@@ -46,10 +49,12 @@ public class Menu {
         customer.setPassword(kb.nextLine());
         // TODO query the database for the customer
         CustomerService service = new CustomerServiceImpl();
-        service.customerLogin(customer);
-        System.out.println(customer.toString());
-        // if successful take them to displayCustomerMenu
+        customer = service.customerLogin(customer);
 
+        // if successful take them to displayCustomerMenu
+        if(customer.getId() == null){
+            throw new BusinessException("Log in credentials incorrect.");
+        }
     }
 
     private static void displayWithdrawalMenu(){
