@@ -63,8 +63,8 @@ public class Menu {
         System.out.println("1) Check Balance");
         System.out.println("2) Deposit");
         System.out.println("3) Withdraw");
-        System.out.println("4) Transfer funds to another Account");
-        System.out.println("5) Transfer funds to another M & B Customer");
+        System.out.println("4) Transfer funds to another M & B Customer");
+//        System.out.println("5) Transfer funds to another Account");
         System.out.println("0) Log out");
     }
 
@@ -108,6 +108,7 @@ public class Menu {
             if(customer == null){
                 throw new BusinessException("Log in credentials incorrect.");
             }
+
             return customer;
         } catch(BusinessException e){
             System.out.println(e.getMessage());
@@ -224,7 +225,7 @@ public class Menu {
     public void runCustomerMenu(Customer customer){
         while(!quit){
             displayCustomerMenu();
-            int choice = getInput(4);
+            int choice = getInput(6);
             handleCustomerMenu(choice, customer);
         }
     }
@@ -303,16 +304,17 @@ public class Menu {
                 System.out.println(e.getMessage());
                 }
                 break;
+
             case 4:
-                //Transfer funds to an account attached to the same customer
-                break;
-            case 5:
                 //Transfer funds to another customer account
                 try{
                     displayCustTransferMenu(customer);
                 } catch(BusinessException e){
                     System.out.println(e.getMessage());
                 }
+                break;
+            case 5:
+                //Transfer funds to an account attached to the same customer
                 break;
             default:
                 System.out.println("Invalid selection, please try again.");
@@ -324,9 +326,6 @@ public class Menu {
 
         Scanner kb = new Scanner(System.in);
         Customer recipient = new Customer();
-        Transaction transaction = new Transaction();
-
-        transaction.setSender(customer.getAccounts().get(0));
 
         System.out.println("------------------------------------");
         System.out.println("Transfer Funds to Another Customer");
@@ -339,20 +338,27 @@ public class Menu {
 
         System.out.println("Please enter the amount you'd like to transfer: ");
         double amount = Double.parseDouble(kb.nextLine());
-        transaction.setAmount(amount);
+
+
+
 
         try {
             CustomerService cService = new CustomerServiceImpl();
             TransactionService tService = new TransactionServiceImpl();
+            AccountService aService = new AccountServiceImpl();
             recipient = cService.getCustomerByUsername(recipient.getUsername());
 
-            transaction.setReceiver(recipient.getAccounts().get(0));
+            Transaction transaction = customer.getAccounts().get(0).transfer(recipient, amount);
 
+            tService.createTransaction(transaction);
+            System.out.println("Transaction successfully created.");
+            aService.updateBalance(recipient.getAccounts().get(0));
+            aService.updateBalance(customer.getAccounts().get(0));
 
+            displayBalance(customer);
         } catch(BusinessException e){
             System.out.println(e.getMessage());
         }
-
     }
 
     private void handleHomeMenu(int choice){

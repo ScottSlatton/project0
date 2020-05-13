@@ -72,7 +72,6 @@ public class CustomerDaoImpl implements CustomerDao {
                 a.setBalance(resultSet.getDouble("balance"));
                 accounts.add(a);
                 c.setAccounts(accounts);
-                System.out.println("You have been logged in. \nWelcome " + c.getUsername());
                 return c;
             }else {
                 throw new BusinessException(Username +" does not exist");

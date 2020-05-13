@@ -7,17 +7,36 @@ import com.banking.models.Account;
 import com.banking.models.Employee;
 import com.banking.models.Transaction;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionDaoImpl implements TransactionDao {
     @Override
-    public void createTransaction(Transaction transaction) {
+    public void createTransaction(Transaction transaction) throws BusinessException {
 
+        try(Connection connection = OracleConnection.getConnection()){
+            String sql= "{call CREATETRANSACTION(?, ?, ?, ?)}";
+
+            //fill in the ?'s
+
+            CallableStatement callableStatement = connection.prepareCall(sql);
+            callableStatement.setString(2, transaction.getSender().getId());
+            callableStatement.setString(3, transaction.getReceiver().getId());
+            callableStatement.setDouble(4, transaction.getAmount());
+            //register id because it is an OUT param
+            callableStatement.registerOutParameter(1, Types.VARCHAR);
+
+            callableStatement.execute();
+
+            //callableStatement should have executed and now contains the ID param
+
+//           customer.setId(callableStatement.getString(1));
+            System.out.println("Customer account successfully created.");
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new BusinessException("Internal error. Please don't panic.");
+        }
     }
 
     @Override

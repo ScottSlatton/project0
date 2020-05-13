@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface TransactionDao {
 
-    void createTransaction(Transaction transaction);
+    void createTransaction(Transaction transaction) throws BusinessException;
     List<Transaction> getAllTransactions() throws BusinessException;
 }
