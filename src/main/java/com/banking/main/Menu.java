@@ -26,12 +26,12 @@ public class Menu {
 
     boolean quit = false;
 
-    private static void displayBalance(Customer customer){
+    private static void displayBalance(Customer customer) throws NullPointerException{
 
         List<Account> accountList = customer.getAccounts();
         for (int i = 0; i < accountList.size();i++){
             Account account = accountList.get(i);
-            System.out.println("\nYour balance for account: " + account.getId() + " is currently: $" + account.getBalance());
+            System.out.println(customer.getUsername() + " balance for account: " + account.getId() + " is currently: $" + account.getBalance());
         }
 
     }
@@ -222,7 +222,7 @@ public class Menu {
         }
         return choice;
     }
-    public void runCustomerMenu(Customer customer){
+    public void runCustomerMenu(Customer customer) throws BusinessException {
         while(!quit){
             displayCustomerMenu();
             int choice = getInput(6);
@@ -254,9 +254,9 @@ public class Menu {
                 break;
             case 1:
                 //Check customer account by user Id
-                try{
+                try {
                     displayFindCustomerByIdMenu();
-                } catch(BusinessException e){
+                } catch (BusinessException e) {
                     System.out.println(e.getMessage());
                 }
                 break;
@@ -270,19 +270,19 @@ public class Menu {
                 break;
             case 3:
                 //Display all Customer accounts
-                try {
-                    displayAllCustomerAccounts();
-                }catch (BusinessException e){
-                System.out.println(e.getMessage());
-            }
+//                try {
+//                    displayAllCustomerAccounts();
+//                }catch (BusinessException e){
+//                System.out.println(e.getMessage());
+//            }
                 break;
             case 4:
                 //View all transactions
-                try{
-                    displayAllTransactionsMenu();
-                }catch(BusinessException e){
-                    System.out.println(e.getMessage());
-                }
+//                try{
+//                    displayAllTransactionsMenu();
+//                }catch(BusinessException e){
+//                    System.out.println(e.getMessage());
+//                }
                 break;
             default:
                 System.out.println("Invalid selection, please try again.");
@@ -291,7 +291,51 @@ public class Menu {
 
 
     }
-    private void handleCustomerMenu(int choice, Customer customer){
+
+    private void displayFindCustomerByUsernameMenu() throws BusinessException {
+
+        System.out.println("------------");
+        System.out.println("Find Customer By Username");
+        System.out.println("------------");
+        System.out.println("Please enter the Username of the account you wish to find: ");
+        Scanner kb = new Scanner(System.in);
+        Customer customer = null;
+
+        try{
+            String username = kb.nextLine();
+
+            CustomerService service = new CustomerServiceImpl();
+            customer = service.getCustomerByUsername(username);
+            displayBalance(customer);
+
+        } catch(NumberFormatException | BusinessException e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    private void displayFindCustomerByIdMenu() throws BusinessException {
+
+        System.out.println("------------");
+        System.out.println("Find Customer By Id");
+        System.out.println("------------");
+        System.out.println("Please enter the UserID of the account you wish to find: ");
+        Scanner kb = new Scanner(System.in);
+        Customer customer = null;
+
+        try{
+            String id = kb.nextLine();
+
+            CustomerService service = new CustomerServiceImpl();
+            customer = service.getCustomerById(id);
+            displayBalance(customer);
+
+        } catch(NumberFormatException | BusinessException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void handleCustomerMenu(int choice, Customer customer) throws BusinessException {
 
         //Logic for the Customer Sub-menu options
 

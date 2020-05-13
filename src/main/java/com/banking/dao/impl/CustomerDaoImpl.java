@@ -49,7 +49,6 @@ public class CustomerDaoImpl implements CustomerDao {
         Customer c = null;
 
         try(Connection connection=OracleConnection.getConnection()){
-//            String sql="Select id, username from customer where username = ? AND password = ?";
             String sql="Select customer.id AS userID, customer.username, account.balance, " +
                     "account.id AS accountID " +
                     "FROM Customer " +
@@ -165,9 +164,10 @@ public class CustomerDaoImpl implements CustomerDao {
                     "account.id AS accountID " +
                     "FROM Customer " +
                     "JOIN Account ON Account.id = customer.accountid " +
-                    "WHERE id = ?";
+                    "WHERE customer.id = ?";
             PreparedStatement ps=connection.prepareStatement(sql);
             ps.setString(1, id);
+
 
             ResultSet resultSet=ps.executeQuery();
 
@@ -180,7 +180,6 @@ public class CustomerDaoImpl implements CustomerDao {
                 account.setId(resultSet.getString("accountID"));
                 account.setBalance(resultSet.getDouble("balance"));
                 c.setAccount(account);
-                System.out.println("You have been logged in. \nWelcome " + c.getUsername());
                 return c;
             }else {
                 throw new BusinessException("User "+ id+" does not exist");
