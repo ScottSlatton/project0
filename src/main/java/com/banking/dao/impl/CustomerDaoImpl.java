@@ -129,7 +129,32 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public List<Customer> getAllCustomers() throws BusinessException {
-        return null;
+        List<Customer> accountList=new ArrayList<>();
+        try(Connection connection=OracleConnection.getConnection()){
+            String sql="Select customer.id AS userID, customer.username, account.balance, " +
+                    "account.id AS accountID " +
+                    "FROM Customer " +
+                    "JOIN Account ON Account.id = customer.accountid";
+            PreparedStatement preparedStatement=connection.prepareStatement(sql);
+            ResultSet resultSet=preparedStatement.executeQuery();
+            while(resultSet.next()) {
+                Customer c = new Customer();
+                Account a = new Account();
+                List<Account> accounts = new ArrayList<>();
+
+                c.setId(resultSet.getString("userID"));
+                c.setUsername(resultSet.getString("Username"));
+                a.setId(resultSet.getString("accountID"));
+                a.setBalance(resultSet.getDouble("balance"));
+                accounts.add(a);
+                c.setAccounts(accounts);
+
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new BusinessException("Internal Error contact SYSADMIN");
+        }
+
+        return accountList;
     }
 
     @Override

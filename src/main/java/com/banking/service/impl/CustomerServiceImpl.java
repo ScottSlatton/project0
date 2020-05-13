@@ -131,4 +131,15 @@ public class CustomerServiceImpl implements CustomerService {
 
     }
 
+    @Override
+    public List<Customer> getAllCustomers() throws BusinessException {
+        try{
+            List<Customer> accountList = dao.getAllCustomers();
+            return accountList;
+        } catch (BusinessException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
 }

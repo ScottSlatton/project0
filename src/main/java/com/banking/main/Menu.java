@@ -254,19 +254,35 @@ public class Menu {
                 break;
             case 1:
                 //Check customer account by user Id
-
+                try{
+                    displayFindCustomerByIdMenu();
+                } catch(BusinessException e){
+                    System.out.println(e.getMessage());
+                }
                 break;
             case 2:
                 //Check customer account by username
-
+                try{
+                    displayFindCustomerByUsernameMenu();
+                } catch(BusinessException e){
+                    System.out.println(e.getMessage());
+                }
                 break;
             case 3:
-                //View all transactions
-
+                //Display all Customer accounts
+                try {
+                    displayAllCustomerAccounts();
+                }catch (BusinessException e){
+                System.out.println(e.getMessage());
+            }
                 break;
             case 4:
-                //delete a customer's account
-
+                //View all transactions
+                try{
+                    displayAllTransactionsMenu();
+                }catch(BusinessException e){
+                    System.out.println(e.getMessage());
+                }
                 break;
             default:
                 System.out.println("Invalid selection, please try again.");

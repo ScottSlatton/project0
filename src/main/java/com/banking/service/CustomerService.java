@@ -13,5 +13,6 @@ public interface CustomerService {
     Customer getCustomerByUsername(String username) throws BusinessException;
     Customer updateCustomerPassword(String id, String password) throws BusinessException;
     void deleteCustomer(String id) throws BusinessException;
+    List<Customer> getAllCustomers() throws BusinessException;
 
 }
