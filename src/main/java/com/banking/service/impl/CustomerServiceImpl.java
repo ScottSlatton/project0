@@ -34,10 +34,11 @@ public class CustomerServiceImpl implements CustomerService {
             validateCustomer(customer);
             customer = dao.getCustomerByLogin(customer);
             return customer;
-        } catch(BusinessException e) {
+        }catch(BusinessException e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        throw new BusinessException("Customer was not found.");
+
     }
 
     public void validateCustomer(Customer customer) throws BusinessException {

@@ -46,8 +46,10 @@ public class Account {
 
 
 
-    public void deposit(double amount){
-
+    public void deposit(double amount) throws BusinessException{
+        if(amount < 0){
+            return;
+        }
         this.balance += amount;
     }
     public void withdraw(double amount){
@@ -59,16 +61,18 @@ public class Account {
     }
 
 
-    public void transfer(Customer payee, double amount){
+    public void transfer(Customer receiver, double amount) throws BusinessException {
         // Try to withdraw from payer's account
         this.withdraw(amount);
 
         // If successful, find the receiver's bank account and deposit the money
-        List<Account> payeeAccounts = payee.getAccounts();
-        Account payeeAccount = payeeAccounts.get(0);
-        payeeAccount.deposit(amount);
+        List<Account> payeeAccounts = receiver.getAccounts();
+        Account receiverAccount = payeeAccounts.get(0);
+        receiverAccount.deposit(amount);
 
-        //Update both accounts in the db
+        //Update both accounts in the db and store the transaction object in the Transaction table
+        Transaction transaction = new Transaction(this, receiverAccount,amount );
+
     }
 
 

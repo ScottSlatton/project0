@@ -4,8 +4,10 @@ import com.banking.exception.BusinessException;
 import com.banking.models.Account;
 import com.banking.models.Customer;
 import com.banking.models.Employee;
+import com.banking.service.AccountService;
 import com.banking.service.CustomerService;
 import com.banking.service.EmployeeService;
+import com.banking.service.impl.AccountServiceImpl;
 import com.banking.service.impl.CustomerServiceImpl;
 
 import java.text.ParseException;
@@ -31,12 +33,23 @@ public class Menu {
 
     }
 
-    private static void displayDeposit(Customer customer){
+    private static void displayDeposit(Customer customer) throws BusinessException {
         System.out.println("------------");
         System.out.println("Deposit Menu");
         System.out.println("------------");
         System.out.println("How much would you like to deposit?");
-
+        Scanner kb = new Scanner(System.in);
+        Account account = customer.getAccounts().get(0);
+        try{
+            double amount = Double.parseDouble(kb.nextLine());
+            account.deposit(amount);
+            AccountService service = new AccountServiceImpl();
+            account = service.updateBalance(account);
+            customer.setAccount(account);
+            displayBalance(customer);
+        } catch(NumberFormatException e){
+            System.out.println("Wrong input format.");
+        }
 
     }
 
@@ -86,24 +99,37 @@ public class Menu {
 
         System.out.println("Please enter your password");
         customer.setPassword(kb.nextLine());
-
-        CustomerService service = new CustomerServiceImpl();
-        customer = service.customerLogin(customer);
-
-        // if successful take them to displayCustomerMenu
-        if(customer.getId() == null){
-            throw new BusinessException("Log in credentials incorrect.");
+        try {
+            CustomerService service = new CustomerServiceImpl();
+            customer = service.customerLogin(customer);
+            if(customer == null){
+                throw new BusinessException("Log in credentials incorrect.");
+            }
+            return customer;
+        } catch(BusinessException e){
+            System.out.println(e.getMessage());
         }
-        return customer;
+        // if successful take them to displayCustomerMenu
+        throw new BusinessException("Log in credentials incorrect. Please try again.");
     }
 
-    private static void displayWithdrawalMenu(){
+    private static void displayWithdrawalMenu(Customer customer) throws BusinessException {
+        System.out.println("------------");
+        System.out.println("Withdraw Menu");
+        System.out.println("------------");
+        System.out.println("How much would you like to withdraw?");
         Scanner kb = new Scanner(System.in);
-        System.out.println("How much would you like to withdraw?");
-        double amount = Integer.parseInt(kb.nextLine());
-
-        //TODO perform a withdrawal action
-        System.out.println("How much would you like to withdraw?");
+        Account account = customer.getAccounts().get(0);
+        try{
+            double amount = Double.parseDouble(kb.nextLine());
+            account.withdraw(amount);
+            AccountService service = new AccountServiceImpl();
+            account = service.updateBalance(account);
+            customer.setAccount(account);
+            displayBalance(customer);
+        } catch(NumberFormatException e){
+            System.out.println("Wrong input format.");
+        }
 
     }
 
@@ -127,11 +153,9 @@ public class Menu {
         System.out.println("Please enter your desired password");
         customer.setPassword(kb.nextLine());
 
-        List<Account> accounts = new ArrayList<>();
         Account account = new Account();
         account.setBalance(0.0);
-        accounts.add(account);
-        customer.setAccounts(accounts);
+        customer.setAccount(account);
 
         //TODO Validate inputs
         System.out.println(customer);
@@ -262,11 +286,19 @@ public class Menu {
                 break;
             case 2:
                 //Deposit
-                displayDeposit(customer);
+                try {
+                    displayDeposit(customer);
+                } catch (BusinessException e) {
+                    System.out.println(e.getMessage());
+                }
                 break;
             case 3:
                 //Withdraw
-
+                try{
+                    displayWithdrawalMenu(customer);
+                } catch(BusinessException e) {
+                System.out.println(e.getMessage());
+                }
                 break;
             default:
                 System.out.println("Invalid selection, please try again.");

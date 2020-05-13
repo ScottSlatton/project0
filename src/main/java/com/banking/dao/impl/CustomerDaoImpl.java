@@ -134,11 +134,6 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
-    public Customer updateBalance(Customer customer) throws BusinessException {
-        return null;
-    }
-
-    @Override
     public Customer getCustomerById(String id) throws BusinessException {
         Customer c=null;
         try(Connection connection=OracleConnection.getConnection()){
@@ -152,7 +147,6 @@ public class CustomerDaoImpl implements CustomerDao {
 
             ResultSet resultSet=ps.executeQuery();
 
-            List<Account> accounts = new ArrayList<>();
             Account account = new Account();
 
             if(resultSet.next()) {
@@ -161,8 +155,7 @@ public class CustomerDaoImpl implements CustomerDao {
                 c.setUsername(resultSet.getString("username"));
                 account.setId(resultSet.getString("accountID"));
                 account.setBalance(resultSet.getDouble("balance"));
-                accounts.add(account);
-                c.setAccounts(accounts);
+                c.setAccount(account);
                 System.out.println("You have been logged in. \nWelcome " + c.getUsername());
                 return c;
             }else {

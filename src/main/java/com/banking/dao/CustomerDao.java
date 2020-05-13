@@ -12,6 +12,5 @@ public interface CustomerDao {
     Customer getCustomerByLogin(Customer customer) throws BusinessException;
     void deleteCustomer(String id) throws BusinessException;
     List<Customer> getAllCustomers() throws BusinessException;
-    Customer updateBalance(Customer customer) throws BusinessException;
     Customer getCustomerById(String id) throws BusinessException;
 }
