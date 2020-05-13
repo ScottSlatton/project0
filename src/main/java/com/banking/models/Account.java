@@ -48,31 +48,35 @@ public class Account {
 
     public void deposit(double amount) throws BusinessException{
         if(amount < 0){
-            return;
+            throw new BusinessException("Invalid amount entered.");
         }
         this.balance += amount;
     }
-    public void withdraw(double amount){
+    public void withdraw(double amount) throws BusinessException{
         if (amount <= this.balance){
             this.balance -= amount;
         } else {
-            System.out.println("You don't have enough funds!");
+            throw new BusinessException("Insufficient funds.");
         }
     }
 
 
-    public void transfer(Customer receiver, double amount) throws BusinessException {
+    public Transaction transfer(Customer receiver, double amount) throws BusinessException {
         // Try to withdraw from payer's account
-        this.withdraw(amount);
+        try {
+            this.withdraw(amount);
+            List<Account> payeeAccounts = receiver.getAccounts();
+            // If successful, find the receiver's bank account and deposit the money
+            Account receiverAccount = payeeAccounts.get(0);
+            receiverAccount.deposit(amount);
 
-        // If successful, find the receiver's bank account and deposit the money
-        List<Account> payeeAccounts = receiver.getAccounts();
-        Account receiverAccount = payeeAccounts.get(0);
-        receiverAccount.deposit(amount);
-
-        //Update both accounts in the db and store the transaction object in the Transaction table
-        Transaction transaction = new Transaction(this, receiverAccount,amount );
-
+            //Update both accounts in the db and store the transaction object in the Transaction table
+            Transaction transaction = new Transaction(this, receiverAccount,amount );
+            return transaction;
+        } catch(BusinessException e){
+            System.out.println(e.getMessage());
+        }
+        throw new BusinessException("Transfer could not be completed.");
     }
 
 

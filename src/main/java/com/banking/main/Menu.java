@@ -4,9 +4,11 @@ import com.banking.exception.BusinessException;
 import com.banking.models.Account;
 import com.banking.models.Customer;
 import com.banking.models.Employee;
+import com.banking.models.Transaction;
 import com.banking.service.AccountService;
 import com.banking.service.CustomerService;
 import com.banking.service.EmployeeService;
+import com.banking.service.TransactionService;
 import com.banking.service.impl.AccountServiceImpl;
 import com.banking.service.impl.CustomerServiceImpl;
 
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.banking.service.impl.EmployeeServiceImpl;
+import com.banking.service.impl.TransactionServiceImpl;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -133,7 +136,7 @@ public class Menu {
 
     }
 
-    private static void displayCustomerSignUpMenu() throws ParseException, BusinessException {
+    private static void displayCustomerSignUpMenu() throws BusinessException {
         // Make a new pendingCustomer account with the customer's details
 
         Scanner kb = new Scanner(System.in);
@@ -300,11 +303,58 @@ public class Menu {
                 System.out.println(e.getMessage());
                 }
                 break;
+            case 4:
+                //Transfer funds to an account attached to the same customer
+                break;
+            case 5:
+                //Transfer funds to another customer account
+                try{
+                    displayCustTransferMenu(customer);
+                } catch(BusinessException e){
+                    System.out.println(e.getMessage());
+                }
+                break;
             default:
                 System.out.println("Invalid selection, please try again.");
                 break;
         }
     }
+
+    private void displayCustTransferMenu(Customer customer) throws BusinessException{
+
+        Scanner kb = new Scanner(System.in);
+        Customer recipient = new Customer();
+        Transaction transaction = new Transaction();
+
+        transaction.setSender(customer.getAccounts().get(0));
+
+        System.out.println("------------------------------------");
+        System.out.println("Transfer Funds to Another Customer");
+        System.out.println("------------------------------------\n");
+        System.out.println("Please enter the recipient's username: ");
+
+
+        recipient.setUsername(kb.nextLine());
+
+
+        System.out.println("Please enter the amount you'd like to transfer: ");
+        double amount = Double.parseDouble(kb.nextLine());
+        transaction.setAmount(amount);
+
+        try {
+            CustomerService cService = new CustomerServiceImpl();
+            TransactionService tService = new TransactionServiceImpl();
+            recipient = cService.getCustomerByUsername(recipient.getUsername());
+
+            transaction.setReceiver(recipient.getAccounts().get(0));
+
+
+        } catch(BusinessException e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+
     private void handleHomeMenu(int choice){
 
         //Logic for the main menu options
@@ -336,7 +386,7 @@ public class Menu {
                 // new customer sign up
                 try {
                     displayCustomerSignUpMenu();
-                } catch (ParseException | BusinessException e) {
+                } catch (BusinessException e) {
                     System.out.println(e.getMessage());
                 }
                 break;
