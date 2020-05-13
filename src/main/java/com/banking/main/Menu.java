@@ -9,6 +9,7 @@ import com.banking.service.EmployeeService;
 import com.banking.service.impl.CustomerServiceImpl;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,6 +23,7 @@ public class Menu {
     boolean quit = false;
 
     private static void displayBalance(Customer customer){
+
         List<Account> accountList = customer.getAccounts();
         System.out.println("Your balance is currently: $" + accountList.get(0).getBalance());
     }
@@ -60,7 +62,7 @@ public class Menu {
         }
     }
 
-    private static void displayCustomerLogin() throws BusinessException {
+    private static Customer displayCustomerLogin() throws BusinessException {
         System.out.println("--------------");
         System.out.println("Customer Login");
         System.out.println("--------------\n");
@@ -71,9 +73,8 @@ public class Menu {
         customer.setUsername(kb.nextLine());
 
         System.out.println("Please enter your password");
-
         customer.setPassword(kb.nextLine());
-        // TODO query the database for the customer
+
         CustomerService service = new CustomerServiceImpl();
         customer = service.customerLogin(customer);
 
@@ -81,6 +82,7 @@ public class Menu {
         if(customer.getId() == null){
             throw new BusinessException("Log in credentials incorrect.");
         }
+        return customer;
     }
 
     private static void displayWithdrawalMenu(){
@@ -113,7 +115,14 @@ public class Menu {
         System.out.println("Please enter your desired password");
         customer.setPassword(kb.nextLine());
 
+        List<Account> accounts = new ArrayList<>();
+        Account account = new Account();
+        account.setBalance(0.0);
+        accounts.add(account);
+        customer.setAccounts(accounts);
+
         //TODO Validate inputs
+        System.out.println(customer);
 
         Customer pendingCustomer = service.createCustomer(customer);
         if(pendingCustomer.getId() != null){
@@ -172,11 +181,11 @@ public class Menu {
         }
         return choice;
     }
-    public void runCustomerMenu(){
+    public void runCustomerMenu(Customer customer){
         while(!quit){
             displayCustomerMenu();
             int choice = getInput(4);
-            handleCustomerMenu(choice);
+            handleCustomerMenu(choice, customer);
         }
     }
     public void runEmployeeMenu(){
@@ -221,7 +230,7 @@ public class Menu {
 
 
     }
-    private void handleCustomerMenu(int choice){
+    private void handleCustomerMenu(int choice, Customer customer){
 
         //Logic for the Customer Sub-menu options
 
@@ -232,7 +241,7 @@ public class Menu {
                 break;
             case 1:
                 //Check Balance
-
+                displayBalance(customer);
                 break;
             case 2:
                 //Deposit
@@ -259,8 +268,8 @@ public class Menu {
             case 1:
                 // login customer login
                 try {
-                    displayCustomerLogin();
-                    runCustomerMenu();
+                    Customer customer = displayCustomerLogin();
+                    runCustomerMenu(customer);
                 } catch (BusinessException e){
                     System.out.println(e.getMessage());
                 }

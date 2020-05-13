@@ -33,10 +33,11 @@ public class CustomerServiceImpl implements CustomerService {
         try{
             validateCustomer(customer);
             customer = dao.getCustomerByLogin(customer);
+            return customer;
         } catch(BusinessException e) {
             System.out.println(e.getMessage());
         }
-        return customer;
+        return null;
     }
 
     public void validateCustomer(Customer customer) throws BusinessException {
@@ -99,12 +100,12 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer getCustomerById(String id) throws BusinessException {
         try{
-            if(isValidId(id))
-            customer = dao.getCustomerById(id);
+            Customer customer = dao.getCustomerById(id);
+            return customer;
         } catch (BusinessException e) {
             System.out.println(e.getMessage());
         }
-        return customer;
+        return null;
     }
 
     @Override

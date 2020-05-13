@@ -28,11 +28,10 @@ public class Customer extends User {
     public String toString() {
         return "Customer{" +
                 "id='" + id + '\'' +
+                ", accounts=" + accounts +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 '}';
     }
-
 
     public String getId() {
         return id;

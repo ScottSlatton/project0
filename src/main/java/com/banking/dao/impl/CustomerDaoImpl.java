@@ -7,6 +7,7 @@ import com.banking.models.Account;
 import com.banking.models.Customer;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerDaoImpl implements CustomerDao {
@@ -24,20 +25,17 @@ public class CustomerDaoImpl implements CustomerDao {
             callableStatement.setString(2, customer.getPassword());
 
             List<Account> accounts = customer.getAccounts();
-
             callableStatement.setDouble(3, accounts.get(0).getBalance());
-
-
             //register id because it is an OUT param
-
             //callableStatement.registerOutParameter(1, Types.VARCHAR);
 
             callableStatement.execute();
 
+            getCustomerByLogin(customer);
+
             //callableStatement should have executed and now contains the ID param
 
-            customer.setId(callableStatement.getString(1));
-
+//           customer.setId(callableStatement.getString(1));
             System.out.println("Customer account successfully created.");
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -54,7 +52,8 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public Customer getCustomerByLogin(Customer customer) throws BusinessException {
 
-        Customer c=null;
+        Customer c = null;
+
         try(Connection connection=OracleConnection.getConnection()){
 //            String sql="Select id, username from customer where username = ? AND password = ?";
             String sql="Select customer.id AS userID, customer.username, account.balance, " +
@@ -69,12 +68,17 @@ public class CustomerDaoImpl implements CustomerDao {
 
             ResultSet resultSet=ps.executeQuery();
 
+            List<Account> accounts = new ArrayList<>();
+            Account a = null;
             if(resultSet.next()) {
                 c = new Customer();
-
+                a = new Account();
                 c.setId(resultSet.getString("userID"));
                 c.setUsername(resultSet.getString("username"));
-//               c.setAccounts(resultSet.getString("accountid"));
+                a.setId(resultSet.getString("accountID"));
+                a.setBalance(resultSet.getDouble("balance"));
+                accounts.add(a);
+                c.setAccounts(accounts);
                 System.out.println("You have been logged in. \nWelcome " + c.getUsername());
                 return c;
             }else {
@@ -114,21 +118,31 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer getCustomerById(String id) throws BusinessException {
         Customer c=null;
         try(Connection connection=OracleConnection.getConnection()){
-            String sql="Select id, username from customer where id = ?";
+            String sql="Select customer.id AS userID, customer.username, account.balance, " +
+                    "account.id AS accountID " +
+                    "FROM Customer " +
+                    "JOIN Account ON Account.id = customer.accountid " +
+                    "WHERE id = ?";
             PreparedStatement ps=connection.prepareStatement(sql);
-            ps.setString(1, customer.getId());
+            ps.setString(1, id);
 
             ResultSet resultSet=ps.executeQuery();
 
+            List<Account> accounts = new ArrayList<>();
+            Account account = new Account();
+
             if(resultSet.next()) {
                 c = new Customer();
-                c.setId(resultSet.getString("id"));
+                c.setId(resultSet.getString("userID"));
                 c.setUsername(resultSet.getString("username"));
-//              c.setAccounts(resultSet.get("accountid"));
+                account.setId(resultSet.getString("accountID"));
+                account.setBalance(resultSet.getDouble("balance"));
+                accounts.add(account);
+                c.setAccounts(accounts);
                 System.out.println("You have been logged in. \nWelcome " + c.getUsername());
                 return c;
             }else {
-                throw new BusinessException("User "+ customer.getId() +" does not exist");
+                throw new BusinessException("User "+ id+" does not exist");
             }
         } catch (ClassNotFoundException | SQLException e) {
             throw new BusinessException("Internal Error, please don't panic.");
