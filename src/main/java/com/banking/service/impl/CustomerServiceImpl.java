@@ -17,7 +17,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer createCustomer(Customer customer){
 
         try{
-            validatesCustomer(customer);
+            validateCustomer(customer);
             // Call the DAO
             dao.createCustomer(customer);
         } catch(BusinessException e){
@@ -31,7 +31,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         // this is a basic Get customer from Database
         try{
-            validatesCustomer(customer);
+            validateCustomer(customer);
             customer = dao.getCustomerByLogin(customer);
         } catch(BusinessException e) {
             System.out.println(e.getMessage());
@@ -39,7 +39,7 @@ public class CustomerServiceImpl implements CustomerService {
         return customer;
     }
 
-    public void validatesCustomer(Customer customer) throws BusinessException {
+    public void validateCustomer(Customer customer) throws BusinessException {
         if(customer == null){
             throw new BusinessException("Customer Object was not found.");
         } else if (!isValidUsername(customer.getUsername())){
@@ -98,7 +98,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer getCustomerById(String id) throws BusinessException {
-        return null;
+        try{
+            if(isValidId(id))
+            customer = dao.getCustomerById(id);
+        } catch (BusinessException e) {
+            System.out.println(e.getMessage());
+        }
+        return customer;
     }
 
     @Override

@@ -50,5 +50,9 @@ public class Customer extends User {
     public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
     }
+//    public double getBalance(int index){
+//        //customer's can only have 1 bank account right now.
+//        return this.accounts.get(index).getBalance();
+//    }
 
 }

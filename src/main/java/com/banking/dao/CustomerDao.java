@@ -15,4 +15,6 @@ public interface CustomerDao {
     List<Customer> getCustomersByCity(String city) throws BusinessException;
     List<Customer> getAllCustomers() throws BusinessException;
     Customer updateBalance(Customer customer) throws BusinessException;
+
+    Customer getCustomerById(String id) throws BusinessException;
 }

@@ -3,6 +3,7 @@ package com.banking.dao.impl;
 import com.banking.dao.CustomerDao;
 import com.banking.dbutil.OracleConnection;
 import com.banking.exception.BusinessException;
+import com.banking.models.Account;
 import com.banking.models.Customer;
 
 import java.sql.*;
@@ -14,17 +15,22 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer createCustomer(Customer customer) throws BusinessException {
 
         try(Connection connection = OracleConnection.getConnection()){
-            String sql= "{call CREATECUSTOMER(?, ?, ?)}";
+            String sql= "{call CREATECUSTOMERANDACCOUNT(?, ?, ?)}";
 
             //fill in the ?'s
 
             CallableStatement callableStatement = connection.prepareCall(sql);
-            callableStatement.setString(2, customer.getUsername());
-            callableStatement.setString(3, customer.getPassword());
+            callableStatement.setString(1, customer.getUsername());
+            callableStatement.setString(2, customer.getPassword());
+
+            List<Account> accounts = customer.getAccounts();
+
+            callableStatement.setDouble(3, accounts.get(0).getBalance());
+
 
             //register id because it is an OUT param
 
-            callableStatement.registerOutParameter(1, Types.VARCHAR);
+            //callableStatement.registerOutParameter(1, Types.VARCHAR);
 
             callableStatement.execute();
 
@@ -50,7 +56,13 @@ public class CustomerDaoImpl implements CustomerDao {
 
         Customer c=null;
         try(Connection connection=OracleConnection.getConnection()){
-            String sql="Select id, username from customer where username = ? AND password = ?";
+//            String sql="Select id, username from customer where username = ? AND password = ?";
+            String sql="Select customer.id AS userID, customer.username, account.balance, " +
+                    "account.id AS accountID " +
+                    "FROM Customer " +
+                    "JOIN Account ON Account.id = customer.accountid " +
+                    "WHERE username = ? AND password = ? ";
+
             PreparedStatement ps=connection.prepareStatement(sql);
             ps.setString(1, customer.getUsername());
             ps.setString(2, customer.getPassword());
@@ -60,9 +72,9 @@ public class CustomerDaoImpl implements CustomerDao {
             if(resultSet.next()) {
                 c = new Customer();
 
-                c.setId(resultSet.getString("id"));
+                c.setId(resultSet.getString("userID"));
                 c.setUsername(resultSet.getString("username"));
-//                t.setAccounts(resultSet.get("accountid"));
+//               c.setAccounts(resultSet.getString("accountid"));
                 System.out.println("You have been logged in. \nWelcome " + c.getUsername());
                 return c;
             }else {
@@ -96,6 +108,31 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public Customer updateBalance(Customer customer) throws BusinessException {
         return null;
+    }
+
+    @Override
+    public Customer getCustomerById(String id) throws BusinessException {
+        Customer c=null;
+        try(Connection connection=OracleConnection.getConnection()){
+            String sql="Select id, username from customer where id = ?";
+            PreparedStatement ps=connection.prepareStatement(sql);
+            ps.setString(1, customer.getId());
+
+            ResultSet resultSet=ps.executeQuery();
+
+            if(resultSet.next()) {
+                c = new Customer();
+                c.setId(resultSet.getString("id"));
+                c.setUsername(resultSet.getString("username"));
+//              c.setAccounts(resultSet.get("accountid"));
+                System.out.println("You have been logged in. \nWelcome " + c.getUsername());
+                return c;
+            }else {
+                throw new BusinessException("User "+ customer.getId() +" does not exist");
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new BusinessException("Internal Error, please don't panic.");
+        }
     }
 
 //    @Override
