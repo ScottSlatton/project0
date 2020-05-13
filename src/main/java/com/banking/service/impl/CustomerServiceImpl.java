@@ -52,14 +52,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
-    private boolean isValidUsername(String username){
+    public boolean isValidUsername(String username){
         boolean b = false;
         if (username.matches("[a-zA-Z]{2,10}")){
             b = true;
         }
         return b;
     }
-    private boolean isValidId(String id){
+    public boolean isValidId(String id){
         boolean b = false;
         if (id.matches("MBU[A-Z]{3}[0-9]{4}")){
             b = true;
@@ -67,7 +67,7 @@ public class CustomerServiceImpl implements CustomerService {
         return b;
     }
 
-    private boolean isValidPassword(String password){
+    public boolean isValidPassword(String password){
         boolean b = false;
         if (password.matches("[a-zA-Z0-9]{4,20}")){
             b = true;
