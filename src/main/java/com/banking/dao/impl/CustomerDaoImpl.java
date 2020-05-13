@@ -46,7 +46,41 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public Customer getCustomerByUsername(String Username) throws BusinessException {
-        return null;
+        Customer c = null;
+
+        try(Connection connection=OracleConnection.getConnection()){
+//            String sql="Select id, username from customer where username = ? AND password = ?";
+            String sql="Select customer.id AS userID, customer.username, account.balance, " +
+                    "account.id AS accountID " +
+                    "FROM Customer " +
+                    "JOIN Account ON Account.id = customer.accountid " +
+                    "WHERE username = ?";
+
+            PreparedStatement ps=connection.prepareStatement(sql);
+            ps.setString(1, Username);
+
+            ResultSet resultSet=ps.executeQuery();
+
+            List<Account> accounts = new ArrayList<>();
+            Account a = null;
+            if(resultSet.next()) {
+                c = new Customer();
+                a = new Account();
+                c.setId(resultSet.getString("userID"));
+                c.setUsername(resultSet.getString("username"));
+                a.setId(resultSet.getString("accountID"));
+                a.setBalance(resultSet.getDouble("balance"));
+                accounts.add(a);
+                c.setAccounts(accounts);
+                System.out.println("You have been logged in. \nWelcome " + c.getUsername());
+                return c;
+            }else {
+                throw new BusinessException(Username +" does not exist");
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new BusinessException("Internal Error, please don't panic.");
+
+        }
     }
 
     @Override
@@ -90,18 +124,8 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
-    public Customer updateCustomerPhone(String Username, long newPhone) throws BusinessException {
-        return null;
-    }
-
-    @Override
     public void deleteCustomer(String Username) throws BusinessException {
 
-    }
-
-    @Override
-    public List<Customer> getCustomersByCity(String city) throws BusinessException {
-        return null;
     }
 
     @Override

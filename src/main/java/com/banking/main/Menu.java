@@ -19,13 +19,25 @@ import org.apache.log4j.Logger;
 
 public class Menu {
 
-
     boolean quit = false;
 
     private static void displayBalance(Customer customer){
 
         List<Account> accountList = customer.getAccounts();
-        System.out.println("Your balance is currently: $" + accountList.get(0).getBalance());
+        for (int i = 0; i < accountList.size();i++){
+            Account account = accountList.get(i);
+            System.out.println("\nYour balance for account: " + account.getId() + " is currently: $" + account.getBalance());
+        }
+
+    }
+
+    private static void displayDeposit(Customer customer){
+        System.out.println("------------");
+        System.out.println("Deposit Menu");
+        System.out.println("------------");
+        System.out.println("How much would you like to deposit?");
+
+
     }
 
     private static void displayCustomerMenu(){
@@ -135,9 +147,10 @@ public class Menu {
         System.out.println("--------------");
         System.out.println("Employee Menu");
         System.out.println("--------------");
-        System.out.println("1) Check pending customer accounts");
-        System.out.println("2) Check a specific customer account");
+        System.out.println("1) Look up customer account by account ID");
+        System.out.println("2) Look up a customer account by username");
         System.out.println("3) View all transactions");
+        System.out.println("4) Delete a customer's account");
 
 
     }
@@ -153,7 +166,7 @@ public class Menu {
         System.out.println("1) Customer Login");
         System.out.println("2) Employee Login");
         System.out.println("3) Sign up for a new customer account");
-        System.out.println("0) To exit");
+        System.out.println("0) To exit application at any time");
     }
 
     private static void displayLogout(){
@@ -191,7 +204,7 @@ public class Menu {
     public void runEmployeeMenu(){
         while(!quit){
             displayEmployeeMenu();
-            int choice = getInput(4);
+            int choice = getInput(5);
             handleEmployeeMenu(choice);
         }
     }
@@ -212,15 +225,19 @@ public class Menu {
                 logoutMenu();
                 break;
             case 1:
-                //Check customer account by username
+                //Check customer account by user Id
 
                 break;
             case 2:
-                //View all transactions
+                //Check customer account by username
 
                 break;
             case 3:
-                //Withdraw
+                //View all transactions
+
+                break;
+            case 4:
+                //delete a customer's account
 
                 break;
             default:
@@ -245,7 +262,7 @@ public class Menu {
                 break;
             case 2:
                 //Deposit
-
+                displayDeposit(customer);
                 break;
             case 3:
                 //Withdraw
@@ -278,7 +295,6 @@ public class Menu {
                 // employee login
                 try {
                     displayEmployeeLogin();
-                    System.out.println("still inside case try block 289");
                     runEmployeeMenu();
                 } catch (BusinessException e){
                     System.out.println(e.getMessage());

@@ -110,6 +110,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer getCustomerByUsername(String username) throws BusinessException {
+        try{
+            Customer customer = dao.getCustomerByUsername(username);
+            return customer;
+        } catch (BusinessException e) {
+            System.out.println(e.getMessage());
+        }
         return null;
     }
 
