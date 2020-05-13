@@ -14,14 +14,14 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public Customer createCustomer(Customer customer){
+    public Customer createCustomer(Customer customer) throws BusinessException{
 
         try{
             validateCustomer(customer);
             // Call the DAO
             dao.createCustomer(customer);
         } catch(BusinessException e){
-            System.out.println(e.getMessage());
+            throw new BusinessException("Customer could not be created.");
         }
         return customer;
     }

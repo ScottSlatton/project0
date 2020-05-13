@@ -147,13 +147,12 @@ public class CustomerDaoImpl implements CustomerDao {
                 a.setBalance(resultSet.getDouble("balance"));
                 accounts.add(a);
                 c.setAccounts(accounts);
-
+                accountList.add(c);
             }
+            return accountList;
         } catch (ClassNotFoundException | SQLException e) {
             throw new BusinessException("Internal Error contact SYSADMIN");
         }
-
-        return accountList;
     }
 
     @Override

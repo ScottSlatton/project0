@@ -37,7 +37,7 @@ public class Menu {
     }
 
     private static void displayDeposit(Customer customer) throws BusinessException {
-        System.out.println("------------");
+        System.out.println("\n------------");
         System.out.println("Deposit Menu");
         System.out.println("------------");
         System.out.println("How much would you like to deposit?");
@@ -57,7 +57,7 @@ public class Menu {
     }
 
     private static void displayCustomerMenu(){
-        System.out.println("--------------");
+        System.out.println("\n--------------");
         System.out.println("Customer Menu");
         System.out.println("--------------");
         System.out.println("1) Check Balance");
@@ -65,11 +65,12 @@ public class Menu {
         System.out.println("3) Withdraw");
         System.out.println("4) Transfer funds to another M & B Customer");
 //        System.out.println("5) Transfer funds to another Account");
+//        System.out.println("6) Create new account")
         System.out.println("0) Log out");
     }
 
     private static void displayEmployeeLogin() throws BusinessException {
-        System.out.println("--------------");
+        System.out.println("\n--------------");
         System.out.println("Employee Login");
         System.out.println("--------------\n");
         System.out.println("Please enter your username");
@@ -162,7 +163,6 @@ public class Menu {
         customer.setAccount(account);
 
         //TODO Validate inputs
-        System.out.println(customer);
 
         Customer pendingCustomer = service.createCustomer(customer);
         if(pendingCustomer.getId() != null){
@@ -177,8 +177,9 @@ public class Menu {
         System.out.println("--------------");
         System.out.println("1) Look up customer account by account ID");
         System.out.println("2) Look up a customer account by username");
-        System.out.println("3) View all transactions");
-        System.out.println("4) Delete a customer's account");
+        System.out.println("3) View all customer accounts");
+        System.out.println("4) View all transactions");
+//        System.out.println("4) Delete a customer's account");
 
 
     }
@@ -270,19 +271,19 @@ public class Menu {
                 break;
             case 3:
                 //Display all Customer accounts
-//                try {
-//                    displayAllCustomerAccounts();
-//                }catch (BusinessException e){
-//                System.out.println(e.getMessage());
-//            }
+                try {
+                    displayAllCustomerAccounts();
+                }catch (BusinessException e){
+                System.out.println(e.getMessage());
+            }
                 break;
             case 4:
                 //View all transactions
-//                try{
-//                    displayAllTransactionsMenu();
-//                }catch(BusinessException e){
-//                    System.out.println(e.getMessage());
-//                }
+                try{
+                    displayAllTransactionsMenu();
+                }catch(BusinessException e){
+                    System.out.println(e.getMessage());
+                }
                 break;
             default:
                 System.out.println("Invalid selection, please try again.");
@@ -292,11 +293,55 @@ public class Menu {
 
     }
 
+    private void displayAllTransactionsMenu() throws BusinessException {
+
+        System.out.println("---------------------------------");
+        System.out.println("All Monet & Bagges Transactions");
+        System.out.println("---------------------------------");
+
+        TransactionService service = new TransactionServiceImpl();
+        List<Transaction> transactionList = service.getAllTransactions();
+
+
+        for (Transaction transaction : transactionList) {
+            System.out.println("Transaction ID: " + transaction.getId() + " | Sender ID: " + transaction.getSender().getId() +
+                    " | Receiver ID: " + transaction.getReceiver().getId() + " | Amount: $" + transaction.getAmount());
+        }
+
+
+    }
+
+    private void displayAllCustomerAccounts() throws BusinessException{
+        System.out.println("--------------------------");
+        System.out.println("All Monet & Bagges Users");
+        System.out.println("--------------------------");
+
+        try{
+
+            CustomerService service = new CustomerServiceImpl();
+            List<Customer> customerList = service.getAllCustomers();
+
+
+            for (Customer customer : customerList) {
+                System.out.println("Username: " + customer.getUsername() + " | UserID: " + customer.getId() +
+                        " | Account: " + customer.getAccounts().get(0).getId() + " | Balance: " +
+                        customer.getAccounts().get(0).getBalance());
+            }
+
+
+        } catch(NumberFormatException | BusinessException e){
+            System.out.println(e.getMessage());
+        }
+
+
+
+    }
+
     private void displayFindCustomerByUsernameMenu() throws BusinessException {
 
-        System.out.println("------------");
+        System.out.println("---------------------------");
         System.out.println("Find Customer By Username");
-        System.out.println("------------");
+        System.out.println("---------------------------");
         System.out.println("Please enter the Username of the account you wish to find: ");
         Scanner kb = new Scanner(System.in);
         Customer customer = null;
@@ -308,7 +353,7 @@ public class Menu {
             customer = service.getCustomerByUsername(username);
             displayBalance(customer);
 
-        } catch(NumberFormatException | BusinessException e){
+        } catch(NullPointerException | NumberFormatException | BusinessException e){
             System.out.println(e.getMessage());
         }
 
@@ -330,7 +375,7 @@ public class Menu {
             customer = service.getCustomerById(id);
             displayBalance(customer);
 
-        } catch(NumberFormatException | BusinessException e){
+        } catch(NullPointerException| NumberFormatException | BusinessException e){
             System.out.println(e.getMessage());
         }
     }

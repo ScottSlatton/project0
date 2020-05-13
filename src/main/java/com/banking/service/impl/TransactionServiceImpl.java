@@ -3,6 +3,7 @@ package com.banking.service.impl;
 import com.banking.dao.TransactionDao;
 import com.banking.dao.impl.TransactionDaoImpl;
 import com.banking.exception.BusinessException;
+import com.banking.models.Customer;
 import com.banking.models.Transaction;
 import com.banking.service.TransactionService;
 
@@ -35,7 +36,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getAllTransactions() {
+    public List<Transaction> getAllTransactions() throws BusinessException{
+        try{
+            List<Transaction> transactionList = dao.getAllTransactions();
+            return transactionList;
+        } catch (BusinessException e) {
+            System.out.println(e.getMessage());
+        }
         return null;
     }
 
