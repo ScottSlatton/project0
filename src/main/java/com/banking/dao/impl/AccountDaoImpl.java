@@ -7,15 +7,34 @@ import com.banking.models.Account;
 import com.banking.models.Customer;
 import com.sun.xml.internal.rngom.ast.builder.BuildException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.List;
 
 public class AccountDaoImpl implements AccountDao {
 
-    public Account createAccount(Customer customer) throws BusinessException{
-        return null;
+    public void createAccount(Account account) throws BusinessException{
+        try(Connection connection = OracleConnection.getConnection()){
+            String sql= "{call CREATEACCOUNT(?, ?, ?)}";
+
+            //fill in the ?'s
+
+            CallableStatement callableStatement = connection.prepareCall(sql);
+
+            callableStatement.setDouble(2, account.getBalance());
+            callableStatement.setString(3, account.getType());
+            //register id because it is an OUT param
+            callableStatement.registerOutParameter(1, Types.VARCHAR);
+
+            callableStatement.execute();
+
+            //callableStatement should have executed and now contains the ID param
+
+//           customer.setId(callableStatement.getString(1));
+
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new BusinessException("Internal error. Please don't panic.");
+        };
     }
     public Account getAccountById(String accountId) throws BusinessException{
         return null;
@@ -25,7 +44,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public Account updateAccountBalance(Account account) throws BusinessException {
+    public void updateAccountBalance(Account account) throws BusinessException {
         try(Connection connection= OracleConnection.getConnection()){
             String sql="UPDATE account SET balance = ? WHERE id = ?";
             PreparedStatement ps=connection.prepareStatement(sql);
@@ -33,7 +52,6 @@ public class AccountDaoImpl implements AccountDao {
             ps.setString(2, account.getId());
 
             ResultSet resultSet=ps.executeQuery();
-            return account;
         } catch (ClassNotFoundException | SQLException e) {
             throw new BusinessException("Internal Error, please don't panic.");
         }

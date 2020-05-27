@@ -25,16 +25,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account updateBalance(Account account) throws BusinessException {
+    public void updateBalance(Account account) throws BusinessException {
         try{
             validatesAccount(account);
         //may need to validate balance input here
-            account = dao.updateAccountBalance(account);
-            return account;
+            dao.updateAccountBalance(account);
         } catch(BusinessException e) {
             System.out.println(e.getMessage());
         }
-        return null;
     }
 
     @Override

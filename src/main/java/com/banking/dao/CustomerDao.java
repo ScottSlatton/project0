@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CustomerDao {
 
-    Customer createCustomer(Customer customer) throws BusinessException;
+    void createCustomer(Customer customer) throws BusinessException;
     Customer getCustomerByUsername(String username) throws BusinessException;
     Customer getCustomerByLogin(Customer customer) throws BusinessException;
     void deleteCustomer(String id) throws BusinessException;

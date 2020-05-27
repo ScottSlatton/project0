@@ -7,8 +7,8 @@ import com.sun.xml.internal.rngom.ast.builder.BuildException;
 
 public interface AccountDao {
 
-    Account createAccount(Customer customer) throws BusinessException;
+    void createAccount(Account account) throws BusinessException;
     Account getAccountById(String accountId) throws BusinessException;
     Account getAccountByUser(Customer customer) throws BusinessException;
-    Account updateAccountBalance(Account account) throws BusinessException;
+    void updateAccountBalance(Account account) throws BusinessException;
 }

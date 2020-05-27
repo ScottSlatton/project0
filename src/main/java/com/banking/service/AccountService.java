@@ -8,7 +8,7 @@ public interface AccountService {
 
     Account createAccount(Account account) throws BusinessException;
     Account getAccount(Account account) throws BusinessException;
-    Account updateBalance(Account account) throws BusinessException;
+    void updateBalance(Account account) throws BusinessException;
     void deleteAccount(Account account) throws BusinessException;
 
 }
