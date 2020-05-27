@@ -28,7 +28,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
                 System.out.println("You have been logged in. \nWelcome " + emp.getUsername());
                 return emp;
             } else {
-                throw new BusinessException("Username " + employee.getUsername() + " does not exist");
+                throw new BusinessException("User " + employee.getUsername() + " does not exist");
             }
         } catch (ClassNotFoundException | SQLException e) {
             throw new BusinessException("Internal Error, please don't panic.");

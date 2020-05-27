@@ -24,6 +24,23 @@ public class Customer extends User {
 
     }
 
+    public Customer(String username, String password, String id, List<Account> accounts) {
+        super(username, password);
+        this.id = id;
+        this.accounts = accounts;
+    }
+
+    public Customer(String id, List<Account> accounts) {
+        this.id = id;
+        this.accounts = accounts;
+    }
+
+    public Customer(String username, String id, List<Account> accounts) {
+        super(username);
+        this.id = id;
+        this.accounts = accounts;
+    }
+
     @Override
     public String toString() {
         return "Customer{" +
@@ -51,13 +68,8 @@ public class Customer extends User {
     }
 
     public void setAccount(Account account){
-        List<Account> newAccounts = new ArrayList<>();
-        newAccounts.add(account);
-        this.accounts = newAccounts;
+        this.accounts.add(account);
     }
-//    public double getBalance(int index){
-//        //customer's can only have 1 bank account right now.
-//        return this.accounts.get(index).getBalance();
-//    }
+
 
 }

@@ -16,7 +16,7 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer createCustomer(Customer customer) throws BusinessException {
 
         try(Connection connection = OracleConnection.getConnection()){
-            String sql= "{call CREATECUSTOMERANDACCOUNT(?, ?, ?)}";
+            String sql= "{call CREATECUSTOMERANDACCOUNT(?, ?, ?, ?)}";
 
             //fill in the ?'s
 
@@ -26,6 +26,7 @@ public class CustomerDaoImpl implements CustomerDao {
 
             List<Account> accounts = customer.getAccounts();
             callableStatement.setDouble(3, accounts.get(0).getBalance());
+            callableStatement.setString(4, accounts.get(0).getType());
             //register id because it is an OUT param
             //callableStatement.registerOutParameter(1, Types.VARCHAR);
 
@@ -87,7 +88,7 @@ public class CustomerDaoImpl implements CustomerDao {
         Customer c = null;
 
         try(Connection connection=OracleConnection.getConnection()){
-//            String sql="Select id, username from customer where username = ? AND password = ?";
+
             String sql="Select customer.id AS userID, customer.username, account.balance, " +
                     "account.id AS accountID " +
                     "FROM Customer " +
@@ -159,10 +160,10 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer getCustomerById(String id) throws BusinessException {
         Customer c=null;
         try(Connection connection=OracleConnection.getConnection()){
-            String sql="Select customer.id AS userID, customer.username, account.balance, " +
+            String sql="Select customer.id AS userID, customer.username, account.balance, transaction.amount" +
                     "account.id AS accountID " +
                     "FROM Customer " +
-                    "JOIN Account ON Account.id = customer.accountid " +
+                    "INNER JOIN Account ON Account.id = customer.accountid " +
                     "WHERE customer.id = ?";
             PreparedStatement ps=connection.prepareStatement(sql);
             ps.setString(1, id);
@@ -170,15 +171,26 @@ public class CustomerDaoImpl implements CustomerDao {
 
             ResultSet resultSet=ps.executeQuery();
 
+            List<Account> accounts = new ArrayList<>();
             Account account = new Account();
 
             if(resultSet.next()) {
+
+                //Set user data
                 c = new Customer();
                 c.setId(resultSet.getString("userID"));
                 c.setUsername(resultSet.getString("username"));
+
+                //Set account data
                 account.setId(resultSet.getString("accountID"));
                 account.setBalance(resultSet.getDouble("balance"));
-                c.setAccount(account);
+
+                accounts.add(account);
+                c.setAccounts(accounts);
+
+                //Set transaction data
+
+
                 return c;
             }else {
                 throw new BusinessException("User "+ id+" does not exist");

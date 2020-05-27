@@ -32,11 +32,16 @@ public class TransactionDaoImpl implements TransactionDao {
             //callableStatement should have executed and now contains the ID param
 
 //           customer.setId(callableStatement.getString(1));
-            System.out.println("Customer account successfully created.");
+            System.out.println("Transaction Successfully completed");
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new BusinessException("Internal error. Please don't panic.");
         }
+    }
+
+    @Override
+    public Transaction getTransaction(String id) throws BusinessException {
+        return null;
     }
 
     @Override
@@ -64,6 +69,41 @@ public class TransactionDaoImpl implements TransactionDao {
             System.out.println(e.getMessage());
         }
         return transactionList;
+    }
+
+    @Override
+    public List<Transaction> getTransactions(Account account) throws BusinessException {
+        List<Transaction> transactionList = new ArrayList<>();
+        try(Connection connection = OracleConnection.getConnection()){
+            String sql = "SELECT *\n" +
+                    "FROM transaction\n" +
+                    "WHERE receiverid = account.id OR senderid = account.id;";
+
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                Transaction t = new Transaction();
+                Account sender = new Account();
+                Account receiver = new Account();
+
+                sender.setId(rs.getString("senderId"));
+                receiver.setId(rs.getString("receiverId"));
+                t.setId(rs.getString("id"));
+                t.setSender(sender);
+                t.setReceiver(receiver);
+                t.setAmount(rs.getDouble("amount"));
+
+                transactionList.add(t);
+            }
+        } catch(ClassNotFoundException | SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return transactionList;
+    }
+
+    @Override
+    public void deleteTransaction(Transaction transaction) throws BusinessException {
+
     }
 
 

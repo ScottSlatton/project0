@@ -25,7 +25,6 @@ class CustomerDaoImplTest {
     @Test
     void getCustomerByUsername() {
 
-        assertThat()
     }
 
     @Test

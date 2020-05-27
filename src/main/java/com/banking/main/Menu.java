@@ -127,10 +127,8 @@ public class Menu {
         Account account = customer.getAccounts().get(0);
         try{
             double amount = Double.parseDouble(kb.nextLine());
-            account.withdraw(amount);
-            AccountService service = new AccountServiceImpl();
-            account = service.updateBalance(account);
-            customer.setAccount(account);
+            TransactionService tService = new TransactionServiceImpl();
+            tService.transfer(account, account, amount);
             displayBalance(customer);
         } catch(NumberFormatException e){
             System.out.println("Wrong input format.");
@@ -453,12 +451,10 @@ public class Menu {
             AccountService aService = new AccountServiceImpl();
             recipient = cService.getCustomerByUsername(recipient.getUsername());
 
-            Transaction transaction = customer.getAccounts().get(0).transfer(recipient, amount);
+            Account sender = customer.getAccounts().get(0);
+            Account receiver = recipient.getAccounts().get(0);
 
-            tService.createTransaction(transaction);
-            System.out.println("Transaction successfully created.");
-            aService.updateBalance(recipient.getAccounts().get(0));
-            aService.updateBalance(customer.getAccounts().get(0));
+            tService.transfer(sender, receiver, amount);
 
             displayBalance(customer);
         } catch(BusinessException e){

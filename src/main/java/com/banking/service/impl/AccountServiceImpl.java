@@ -56,19 +56,19 @@ public class AccountServiceImpl implements AccountService {
         }
         return b;
     }
-    private boolean isValidDeposit(double deposit){
-        boolean b = false;
-        if (deposit > 0){
-            b = true;
-        }
-        return b;
-    }
-    private boolean isValidWithdrawal(double withdrawal, double balance){
-        boolean b = false;
-        if (withdrawal <= balance ){
-            b = true;
-        }
-        return b;
-    }
+//    private boolean isValidDeposit(double deposit){
+//        boolean b = false;
+//        if (deposit > 0){
+//            b = true;
+//        }
+//        return b;
+//    }
+//    private boolean isValidWithdrawal(double withdrawal, double balance){
+//        boolean b = false;
+//        if (withdrawal <= balance ){
+//            b = true;
+//        }
+//        return b;
+//    }
 
 }
