@@ -132,7 +132,7 @@ public class CustomerDaoImpl implements CustomerDao {
                     "FROM Customer " +
                     "JOIN Account ON Account.id = customer.accountid";
             PreparedStatement preparedStatement=connection.prepareStatement(sql);
-            ResultSet resultSet=preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
                 Customer c = new Customer();
                 Account a = new Account();
